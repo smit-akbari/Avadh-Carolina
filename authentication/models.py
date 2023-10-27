@@ -1,5 +1,6 @@
 from django.db import models
 from django.utils import timezone
+from . import helpers
 
 # Create your models here.
 class baseModel(models.Model):
@@ -15,7 +16,7 @@ class membersModel(baseModel):
     last_name = models.CharField(max_length=255, null=False, blank= False)
     email = models.EmailField(max_length=255, null=False, blank= False, unique= True)
     mobile = models.CharField(max_length=20, null=False, blank= False, unique= True)
-    password = models.CharField(max_length=255, null=False, blank= False)
+    password = models.CharField(default=helpers.generate_password, max_length=255, null=False, blank= False)
     is_active = models.BooleanField(default=True)
 
     def __str__(self):
@@ -31,6 +32,7 @@ class membersModel(baseModel):
     
 
 class memberProfileModel(baseModel):
+    DIR_NAME = 'member_profiles'
     GENDER_OPTIONS = (
         ('Male', 'Male'),
         ('Female', 'Female'),
@@ -38,5 +40,5 @@ class memberProfileModel(baseModel):
     )
 
     member_id = models.ForeignKey(membersModel, on_delete=models.CASCADE)
-    profile = models.ImageField(upload_to="member_profiles/")
+    profile = models.FileField(upload_to=helpers.custom_file_name, default='default-profile.png')
     gender = models.CharField(max_length=20, choices=GENDER_OPTIONS)

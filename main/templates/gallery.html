@@ -34,5 +34,15 @@
           </li> -->
         </ol>
       </nav>
+
+      
+<div class="grid grid-cols-2 my-12 md:grid-cols-4 gap-4">
+  {% for pic in gallery_pic %}
+  <div>
+      <img class="h-auto max-w-full rounded-lg" src="{{pic.gallery_img.url}}" alt="">
+  </div>
+  {% endfor %}
+</div>
+
 </div>
 {% endblock %}
