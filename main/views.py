@@ -46,9 +46,6 @@ def dashboard_view(request):
     }
     return render(request, 'dashboard.html', context)
 
- 
-   
-
 @require_access_token
 def services_view(request):
     services_ = services.objects.all()
@@ -60,6 +57,7 @@ def services_view(request):
 
     # Select the first 6 services from the shuffled list
     services_ = shuffled_services[:6]
+    services_ = sorted(services_, key=lambda x: x.name)
     
     context = {
        'services' : services_,
@@ -85,16 +83,68 @@ def addEvent(request):
             to_date=to_date,
             content=content
         )
+        print(create_club)
         create_club.save()
         messages.success(request, f'{event_name} - Event added')
         return redirect('services_view')
     return redirect('services_view')
 
+@require_access_token
+def update_event(request, booking_id):
+    if request.method == 'POST':
+        event_name = request.POST['event_name']
+        content = request.POST['content']
+        from_date = request.POST['from_date']
+        to_date = request.POST['to_date']
+        getBooking = clubHouseBooking.objects.get(id=booking_id)
+        getBooking.event_name = event_name
+        getBooking.content = content
+        # Convert the date format before saving
+        getBooking.from_date = from_date
+        getBooking.to_date = to_date
+        getBooking.save()
+        return redirect('services_view')
+
+    getBooking = clubHouseBooking.objects.get(id = booking_id)
+    context = {
+        'event_name': getBooking.event_name,
+        'from_date':getBooking.from_date.strftime('%Y-%m-%d'),
+        'to_date':getBooking.to_date.strftime('%Y-%m-%d'),
+        'content': getBooking.content
+    }
+    
+    return render(request, 'update_event.html', context)
+
+
+@require_access_token
+def update_profile(request,member_id):
+    if request.method == 'POST':
+        email = request.POST['email']
+        mobile = request.POST['mobile']
+      
+        getupdateprofile =membersModel.objects.get(id=member_id)
+        getupdateprofile.email = email
+        getupdateprofile.mobile = mobile
+        
+        getupdateprofile.save()
+        return redirect('profile_view')
+
+    getupdateprofile = membersModel.objects.get(id = member_id)
+    context = {
+        'email': getupdateprofile.email,
+        'mobile':getupdateprofile.mobile
+    }
+    
+    return render(request, 'update_profile.html', context)
+
+
+@require_access_token
 def delete_event(request, booking_id):
     getBooking = clubHouseBooking.objects.get(id = booking_id)
     getBooking.delete()
     return redirect('services_view')
 
+@require_access_token
 def gallery_view(request):
     gallery_pic_ = galleryModel.objects.all()
     context = {
@@ -102,6 +152,7 @@ def gallery_view(request):
     }
     return render(request, 'gallery.html',context)
 
+@require_access_token
 def events_view(request):
     event_card_ = eventsModel.objects.all()
     context = {
@@ -109,6 +160,7 @@ def events_view(request):
     }
     return render(request, 'events.html' , context)
 
+@require_access_token
 def emergency_contact_view(request):
     contact_card_ = emergencyContactsModel.objects.all()
     context = {
@@ -116,24 +168,29 @@ def emergency_contact_view(request):
     }
     return render(request, 'emergency_contact.html',context)
 
+@require_access_token
 def suggestion_view(request):
-    suggestion_ = suggestionModel.objects.all()
+    suggestion_ = suggestionModel.objects.all().order_by('-created_at')[:4]
     context = {
         'suggestions' : suggestion_
     }
     return render(request, 'suggestion.html',context)
 
-# @require_access_token
-# def addSuggestion(request):
-#     if request.method == 'POST':
-#         suggestion = request.POST['suggestions']
-#         create_suggestion = suggestionModel.objects.create(
-#             suggestions = suggestion
-#         )
-#         create_suggestion.save()
-#         messages.success(request , 'suggestion added')
-#         return redirect('suggestion_view')
-#     return redirect('suggestion_view')
+@require_access_token
+def addSuggestion(request):
+    if request.method == 'POST':
+        suggestion = request.POST['suggestion']
+        
+        create_suggestion = suggestionModel.objects.create(
+            suggestion = suggestion
+        )
+
+        print(create_suggestion)
+        create_suggestion.save()
+        messages.success(request , 'suggestion added')
+        return redirect('suggestion_view')
+    return redirect('suggestion_view')
+
 
 def profile_view(request):
     return render(request, 'profile.html')

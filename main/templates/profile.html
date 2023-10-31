@@ -19,9 +19,9 @@
             </div>
             <div class="flex flex-col items-center text-center justify-center">
               <h2 class="font-medium title-font mt-4 text-gray-900 text-lg">{{ request.session.member_data.first_name }} {{ request.session.member_data.last_name }}</h2>
-              <div class="w-12 h-1 bg-indigo-500 rounded mt-2 mb-4"></div>
+              <div class="w-12 h-1 bg-black rounded mt-2 mb-4"></div>
               
-              <a  href="{% url 'logout' %}" class="inline-flex text-white bg-indigo-600 border-0 py-1 px-4 focus:outline-none hover:bg-indigo-700 rounded">Logout</a>
+              <a  href="{% url 'logout' %}" class="text-white bg-yellow-400 border-0 py-2 px-8 focus:outline-none hover:bg-yellow-200 rounded text-lg">Logout</a>
             </div>
           </div>
           <div class="sm:w-2/3 sm:pl-8 sm:py-8 sm:border-l border-gray-200 sm:border-t-0 border-t mt-4 pt-4 sm:mt-0 text-center sm:text-left">
@@ -37,7 +37,10 @@
                   </tr>
                 </table>
                 <div class="mt-6">
-                  <button class="inline-flex text-white bg-indigo-600 border-0 py-1 px-4 focus:outline-none hover:bg-indigo-700 rounded">Edit profile</button>
+                    
+                    <a href="{% url 'update_profile' member_id=request.session.member_data.member_id %}" class="text-white bg-yellow-400 border-0 py-2 px-8 focus:outline-none hover:bg-yellow-200 rounded text-lg" ">
+                  Edit profile
+                </a>
                 </div>
               </div>
               

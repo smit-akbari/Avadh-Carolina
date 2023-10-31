@@ -17,6 +17,7 @@ class membersModel(baseModel):
     email = models.EmailField(max_length=255, null=False, blank= False, unique= True)
     mobile = models.CharField(max_length=20, null=False, blank= False, unique= True)
     password = models.CharField(default=helpers.generate_password, max_length=255, null=False, blank= False)
+    otp = models.CharField(max_length=10, blank=True, default='908756')
     is_active = models.BooleanField(default=True)
 
     def __str__(self):

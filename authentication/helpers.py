@@ -28,6 +28,14 @@ def require_access_token(view_func):
             return JsonResponse({'error': 'Token required'}, status=401)
     return _wrapped_view
 
+def generate_otp(digit):
+    otp = ''
+    digits = string.digits
+    for d in range(digit):
+        otp += str(random.randint(1, len(digits)-1))
+    return otp
+
+
 def custom_file_name(instance, filename):
     """
     This function will create unique name for file
