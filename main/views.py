@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
 from datetime import datetime
-from authentication.helpers import require_access_token,decode_jwt_token
+from authentication.helpers import require_access_token,decode_jwt_token,get_latest_pics
 from authentication.models import membersModel,memberProfileModel
-from .models import services, clubHouseBooking, emergencyContactsModel, eventsModel, galleryModel
+from .models import services, clubHouseBooking, emergencyContactsModel, eventsModel, galleryModel, suggestionModel
 import random
 
 
@@ -24,6 +24,8 @@ def dashboard_view(request):
     email = decode_jwt_token(request.session.get('token'))['email']
     getMember = membersModel.objects.get(email=email)
     getMemberProfile = memberProfileModel.objects.get(member_id_id= getMember.id)
+    gallery_pic_ = galleryModel.objects.all()
+    gallery_pic_ = get_latest_pics(galleryModel, 'created_at')
 
     member_data = {
         'member_id': getMember.id,
@@ -39,10 +41,13 @@ def dashboard_view(request):
     # Pass the greeting and user_name to the template
     context = {
         'greeting': greeting,
-        'member_name': f"{getMember.first_name} {getMember.last_name}"
+        'member_name': f"{getMember.first_name} {getMember.last_name}",
+        'gallery_pic' : gallery_pic_
     }
     return render(request, 'dashboard.html', context)
 
+ 
+   
 
 @require_access_token
 def services_view(request):
@@ -112,4 +117,25 @@ def emergency_contact_view(request):
     return render(request, 'emergency_contact.html',context)
 
 def suggestion_view(request):
-    return render(request, 'suggestion.html')
+    suggestion_ = suggestionModel.objects.all()
+    context = {
+        'suggestions' : suggestion_
+    }
+    return render(request, 'suggestion.html',context)
+
+# @require_access_token
+# def addSuggestion(request):
+#     if request.method == 'POST':
+#         suggestion = request.POST['suggestions']
+#         create_suggestion = suggestionModel.objects.create(
+#             suggestions = suggestion
+#         )
+#         create_suggestion.save()
+#         messages.success(request , 'suggestion added')
+#         return redirect('suggestion_view')
+#     return redirect('suggestion_view')
+
+def profile_view(request):
+    return render(request, 'profile.html')
+
+

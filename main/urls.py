@@ -10,4 +10,6 @@ urlpatterns = [
     path('events_view/', events_view, name='events_view'),
     path('emergency_contact_view/', emergency_contact_view, name='emergency_contact_view'),
     path('suggestion_view/', suggestion_view, name='suggestion_view'),
+    # path('addSuggestion/', addSuggestion, name='addSuggestion'),
+    path('profile_view/', profile_view, name='profile_view')
 ]

@@ -33,3 +33,10 @@ def index_view(request):
     for member in querySet:
         print(member.first_name)
     return render(request, 'index.html')
+
+
+@require_access_token
+def logout(request):
+    request.session.clear()
+    messages.success(request, "You are logged out")
+    return redirect('login_view')

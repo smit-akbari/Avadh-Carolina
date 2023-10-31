@@ -69,7 +69,7 @@ def generate_password(length=8, include_digits=True, include_special_chars=True)
 def create_jwt_token(email):
     payload = {
         'email': email,
-        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=1), 
+        'exp': datetime.datetime.utcnow() + datetime.timedelta(hours=10), 
     }
     token = jwt.encode(payload, secret_key, algorithm='HS256')
     return token
@@ -77,3 +77,8 @@ def create_jwt_token(email):
 def decode_jwt_token(token):
     payload = jwt.decode(token, secret_key, algorithms=['HS256'])
     return payload
+
+
+def get_latest_pics(model, field_name, limit=12):
+    # Retrieve the first 'limit' items ordered by the specified field in descending order
+    return model.objects.order_by(f'-{field_name}')[:limit]
