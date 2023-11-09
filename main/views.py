@@ -3,8 +3,11 @@ from django.contrib import messages
 from datetime import datetime
 from authentication.helpers import require_access_token,decode_jwt_token,get_latest_pics
 from authentication.models import membersModel,memberProfileModel
-from .models import services, clubHouseBooking, emergencyContactsModel, eventsModel, galleryModel, suggestionModel
+from .models import services, clubHouseBooking, emergencyContactsModel, eventsModel, galleryModel
 import random
+from newsapi import NewsApiClient
+
+newsapi = NewsApiClient(api_key='c8088e23fcf7410db4f22316463855b4')
 
 
 # Create your views here.
@@ -115,7 +118,6 @@ def update_event(request, booking_id):
     
     return render(request, 'update_event.html', context)
 
-
 @require_access_token
 def update_profile(request,member_id):
     if request.method == 'POST':
@@ -136,7 +138,6 @@ def update_profile(request,member_id):
     }
     
     return render(request, 'update_profile.html', context)
-
 
 @require_access_token
 def delete_event(request, booking_id):
@@ -161,6 +162,14 @@ def events_view(request):
     return render(request, 'events.html' , context)
 
 @require_access_token
+def news_view(request):
+    sources = newsapi.get_sources()
+    context = {
+        'news' : sources['sources']
+    }
+    return render(request,"news.html",context)
+
+@require_access_token
 def emergency_contact_view(request):
     contact_card_ = emergencyContactsModel.objects.all()
     context = {
@@ -168,31 +177,10 @@ def emergency_contact_view(request):
     }
     return render(request, 'emergency_contact.html',context)
 
-@require_access_token
-def suggestion_view(request):
-    suggestion_ = suggestionModel.objects.all().order_by('-created_at')[:4]
-    context = {
-        'suggestions' : suggestion_
-    }
-    return render(request, 'suggestion.html',context)
-
-@require_access_token
-def addSuggestion(request):
-    if request.method == 'POST':
-        suggestion = request.POST['suggestion']
-        
-        create_suggestion = suggestionModel.objects.create(
-            suggestion = suggestion
-        )
-
-        print(create_suggestion)
-        create_suggestion.save()
-        messages.success(request , 'suggestion added')
-        return redirect('suggestion_view')
-    return redirect('suggestion_view')
-
-
 def profile_view(request):
     return render(request, 'profile.html')
+
+
+
 
 

@@ -21,14 +21,6 @@ class services(baseModel):
     def __str__(self):
         return self.name
     
-# suggestionModel 
-
-class suggestionModel(baseModel):
-    suggestion = models.TextField(max_length=255, null=False, blank= False)
-    
-    def __str__(self):
-        return f"{self.id}"
-    
 
 # clubhousebookingmodel
 
